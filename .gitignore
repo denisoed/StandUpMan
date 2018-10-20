@@ -1,0 +1,12 @@
+.idea
+.vscode
+*.pyc
+.db
+*.log
+.pyo
+*__pycache__
+.DS_Store
+.migrations/
+htmlcov
+.cache
+*.coverage
