@@ -16,9 +16,6 @@ def standup(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text="Обработка данных...")
     bot.send_message(chat_id=update.message.chat_id, text="%s" % generateStandup())
 
-# handler send command(=> /start <=)
-_UPDATER.dispatcher.add_handler(CommandHandler('start', start))
-
 # handler send command(=> /standup <=)
 _UPDATER.dispatcher.add_handler(CommandHandler('standup', standup))
 
