@@ -7,7 +7,17 @@ def start_buttons(bot, update, item, message):
     keyboard = [[auth_btn]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = bot.sendMessage(chat_id=update.message.chat_id,
-                           text=message, reply_markup=reply_markup)
+                           text='Для начала давай авторизуемся', reply_markup=reply_markup)
+    return send
+
+# Server buttons
+def serverBtn(bot, update, item, message):
+    blue_jira = InlineKeyboardButton(text="Jira Software")
+    red_jira = InlineKeyboardButton(text="Puzanov Production")
+    keyboard = [[blue_jira, red_jira]]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    send = bot.sendMessage(chat_id=update.message.chat_id,
+                           text='Выбери сервер', reply_markup=reply_markup)
     return send
 
 # Authorization
@@ -16,14 +26,15 @@ def auth(bot, update, item, message):
     keyboard = [[sign_in]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = bot.sendMessage(chat_id=update.message.chat_id,
-                           text=message, reply_markup=reply_markup)
+                           text='Введи логин и пароль через пробел > login password, нажми Enter и потом уже нажимай на кнокпу Войти', reply_markup=reply_markup)
     return send
 
 # Generate standup 
 def generateStandup(bot, update, item, message):
-    sign_in = InlineKeyboardButton(text="Сгенерировать StandUp")
-    keyboard = [[sign_in]]
+    standup = InlineKeyboardButton(text="Сгенерировать StandUp")
+    sign_out = InlineKeyboardButton(text="Выйти")
+    keyboard = [[standup], [sign_out]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = bot.sendMessage(chat_id=update.message.chat_id,
-                           text=message, reply_markup=reply_markup)
+                           text='Пока генерируется данные только для блока ВЧЕРА', reply_markup=reply_markup)
     return send

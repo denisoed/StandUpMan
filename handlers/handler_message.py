@@ -1,7 +1,7 @@
 from handlers import messages, create_button
 
 # Necessary variables
-_MESSAGE = ''
+_MESSAGE = 'test'
 
 def start(bot, update):
     create_button.start_buttons( \
@@ -12,10 +12,19 @@ def message_processing(bot, update):
     btn_callback_msg = update._effective_message.text
     if update._effective_message.text == 'Авторизоваться':
         run(bot, update, btn_callback_msg)
+    if update._effective_message.text == 'Jira Software':
+        global _MESSAGE
+        _MESSAGE = btn_callback_msg
+        run(bot, update, btn_callback_msg)
+    if update._effective_message.text == 'Puzanov Production':
+        _MESSAGE
+        _MESSAGE = btn_callback_msg
+        run(bot, update, btn_callback_msg)
     if update._effective_message.text == 'Войти':
         run(bot, update, btn_callback_msg)
+    if update._effective_message.text == 'Выйти':
+        run(bot, update, btn_callback_msg)
     else:
-        global _MESSAGE
         _MESSAGE = update._effective_message.text
         run(bot, update, btn_callback_msg)
 
