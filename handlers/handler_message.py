@@ -4,25 +4,19 @@ from handlers import messages, create_button
 _MESSAGE = 'test'
 
 def start(bot, update):
-    create_button.start_buttons( \
-        bot, update, 0, 'Нужно авторизоваться')
+    create_button.start_buttons(bot, update, 0, 'Нужно авторизоваться')
 
 # Handler incoming messages
 def message_processing(bot, update):
+    global _MESSAGE
     btn_callback_msg = update._effective_message.text
-    if update._effective_message.text == 'Авторизоваться':
-        run(bot, update, btn_callback_msg)
     if update._effective_message.text == 'Jira Software':
-        global _MESSAGE
         _MESSAGE = btn_callback_msg
         run(bot, update, btn_callback_msg)
     if update._effective_message.text == 'Puzanov Production':
-        _MESSAGE
         _MESSAGE = btn_callback_msg
         run(bot, update, btn_callback_msg)
     if update._effective_message.text == 'Войти':
-        run(bot, update, btn_callback_msg)
-    if update._effective_message.text == 'Выйти':
         run(bot, update, btn_callback_msg)
     else:
         _MESSAGE = update._effective_message.text

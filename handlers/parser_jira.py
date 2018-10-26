@@ -16,12 +16,10 @@ class ParserJira:
 
 
     def authInJira(self, bot, update, item, message):
+        bot.sendMessage(chat_id=update.message.chat_id, text='Ожидай...')
         self.jira = JIRA(basic_auth=('{0}'.format(self.login), '{0}'.format(self.password)), options={'server': '{0}'.format(self.server)})
         bot.send_message(chat_id=update.message.chat_id, \
             reply_markup=create_button.generateStandup(bot, update, item, message))
-
-
-    # authInJira('https://nappyclub.atlassian.net', 'denisod93@gmail.com', 'gorod312')
 
     def getServer(self, bot, update, item, message):
         if message == 'Jira Software':
@@ -32,10 +30,19 @@ class ParserJira:
             reply_markup=create_button.auth(bot, update, item, message))
 
     def getloginPassword(self, bot, update, item, message):
-        logPass = message.split(' ')
-        self.login = logPass[0]
-        self.password = logPass[1]
-        self.authInJira(bot, update, item, message)
+        if message == 'Jira Software' or message == 'Puzanov Production':
+            bot.sendMessage(chat_id=update.message.chat_id, \
+                text='Логин и пароль через пробел!')
+        else:
+            array = message.split(' ')
+            logPass_array = ' '.join(array).split()
+            if len(logPass_array) == 2:
+                self.login = logPass_array[0]
+                self.password = logPass_array[1]
+                self.authInJira(bot, update, item, message)
+            else:
+                bot.sendMessage(chat_id=update.message.chat_id, \
+                    text='Логин и пароль через пробел!')
 
     def getWorklogs(self, issues):
         worklogs = []
@@ -60,16 +67,29 @@ class ParserJira:
         else:
             return "%d-%d-%d" % (now.year, now.month, now.day - 1)
 
+    def getProjects():
+        projects = self.jira.projects()
+        return projects
+
     def getYesterdayWorklogIssues(self):
         yesterday_issues_worklogs = self.jira.search_issues('worklogAuthor = currentUser() AND worklogDate = "%s"' % self.getYesterday())
         return self.getWorklogs(yesterday_issues_worklogs)
 
-    def generateStandup(self, bot, update, item, message):
-        issues_with_worklogs = self.getYesterdayWorklogIssues()
-        yesterday = ''
-        for issue in issues_with_worklogs:
-            yesterday += '- {0} https://nappyclub.atlassian.net/browse/{1}\n'.format(self.handlerWorklogs(issue.fields.worklog.worklogs), issue.key)
+    def getTodayIssues(self):
+        today_issues = self.jira.search_issues('assignee = currentuser() AND project = "NappyClub" AND sprint in openSprints() AND worklogAuthor = currentUser() AND status in (Idle, Accepted, Open, "In Progress")')
+        return today_issues
 
-        standup = 'Доброе утро!\n\n*Вчера*\n%s\n*Сегодня*\n%s\n\n*Проблемы*\n%s' % (yesterday, '- Чинить баги', '- Нет проблем!')
+    def generateStandup(self, bot, update, item, message):
+        bot.sendMessage(chat_id=update.message.chat_id, text='Обработка данных...')
+        issues_with_worklogs = self.getYesterdayWorklogIssues()
+        today_issues_with_worklogs = self.getTodayIssues()
+        yesterday = ''
+        today = ''
+        for issue in issues_with_worklogs:
+            yesterday += '- {0} {1}/browse/{2}\n'.format(self.handlerWorklogs(issue.fields.worklog.worklogs), self.server, issue.key)
+            
+        for issue in today_issues_with_worklogs:
+            today += '- {0} {1}/browse/{2}\n'.format(issue.fields.summary, self.server, issue.key)
+        
+        standup = 'Доброе утро!\n\n*Вчера*\n{0}\n*Сегодня*\n{1}\n\n*Проблемы*\n{2}'.format(yesterday, today, '- Нет проблем!')
         bot.sendMessage(chat_id=update.message.chat_id, text=standup)
-        return standup

@@ -7,7 +7,7 @@ def start_buttons(bot, update, item, message):
     keyboard = [[auth_btn]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = bot.sendMessage(chat_id=update.message.chat_id,
-                           text='Для начала давай авторизуемся', reply_markup=reply_markup)
+                           text=messages.desc['start_msg'], reply_markup=reply_markup)
     return send
 
 # Server buttons
@@ -17,7 +17,7 @@ def serverBtn(bot, update, item, message):
     keyboard = [[blue_jira, red_jira]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = bot.sendMessage(chat_id=update.message.chat_id,
-                           text='Выбери сервер', reply_markup=reply_markup)
+        text=messages.handler_reply_button[item]['text'], reply_markup=reply_markup)
     return send
 
 # Authorization
@@ -26,7 +26,7 @@ def auth(bot, update, item, message):
     keyboard = [[sign_in]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = bot.sendMessage(chat_id=update.message.chat_id,
-                           text='Введи логин и пароль через пробел > login password, нажми Enter и потом уже нажимай на кнокпу Войти', reply_markup=reply_markup)
+        text=messages.handler_reply_button[item]['text'], reply_markup=reply_markup)
     return send
 
 # Generate standup 
@@ -36,5 +36,5 @@ def generateStandup(bot, update, item, message):
     keyboard = [[standup], [sign_out]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = bot.sendMessage(chat_id=update.message.chat_id,
-                           text='Пока генерируется данные только для блока ВЧЕРА', reply_markup=reply_markup)
+        text=messages.handler_reply_button[item]['text'], reply_markup=reply_markup)
     return send
