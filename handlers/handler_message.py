@@ -1,29 +1,37 @@
 from handlers import messages, create_button
 
-# Necessary variables
-_MESSAGE = 'test'
 
-def start(bot, update):
-    create_button.start_buttons(bot, update, 0, 'Нужно авторизоваться')
+class Messages:
 
-# Handler incoming messages
-def message_processing(bot, update):
-    global _MESSAGE
-    btn_callback_msg = update._effective_message.text
-    if update._effective_message.text == 'Jira Software':
-        _MESSAGE = btn_callback_msg
-        run(bot, update, btn_callback_msg)
-    if update._effective_message.text == 'Puzanov Production':
-        _MESSAGE = btn_callback_msg
-        run(bot, update, btn_callback_msg)
-    if update._effective_message.text == 'Войти':
-        run(bot, update, btn_callback_msg)
-    else:
-        _MESSAGE = update._effective_message.text
-        run(bot, update, btn_callback_msg)
+    def __init__(self):
+        self.data = {}
+        self.btn_callback_msg  = ''
+        self._MESSAGE = 'self'
 
-def run(bot, update, btn_callback_msg):
-    for item in range(len(messages.handler_reply_button)):
-        if btn_callback_msg == messages.handler_reply_button[item]['name']:
-            run = messages.handler_reply_button[item]['run']
-            run(bot, update, item, _MESSAGE)
+    def start(self, bot, update):
+        self.data = {
+            'bot': bot,
+            'update': update
+        }
+        create_button.start_buttons(self.data)
+
+    def message_processing(self, bot, update):
+        self.btn_callback_msg = update._effective_message.text
+        if update._effective_message.text == 'Jira Software':
+            self._MESSAGE = self.btn_callback_msg
+            self.run()
+        if update._effective_message.text == 'Puzanov Production':
+            self._MESSAGE = self.btn_callback_msg
+            self.run()
+        if update._effective_message.text == 'Войти':
+            self.run()
+        else:
+            self._MESSAGE = update._effective_message.text
+            self.run()
+
+    def run(self):
+        for item in range(len(messages.handler_reply_button)):
+            if self.btn_callback_msg == messages.handler_reply_button[item]['name']:
+                self.data.update({ 'item': item, 'message': self._MESSAGE })
+                run = messages.handler_reply_button[item]['run']
+                run(self.data)

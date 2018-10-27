@@ -38,7 +38,7 @@ handler_reply_button = [
     },
     {
         'name': 'Сгенерировать StandUp',
-        'run': jira.generateStandup,
+        'run': jira.showProjects,
         'text': 'Стендап готов!'
     }
 ]

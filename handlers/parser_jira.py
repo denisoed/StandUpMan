@@ -1,6 +1,7 @@
 from jira import JIRA
 import datetime
 from telegram import ParseMode
+import threading
 from handlers import create_button
 
 
@@ -8,40 +9,56 @@ from handlers import create_button
 class ParserJira:
     """docstring"""
 
-    def __init__(self, server=None, login=None, password=None, jira=None):
+    def __init__(self, server=None, login=None, password=None, jira=None, userProjects=[]):
         self.server = server
         self.login = login
         self.password = password
         self.jira = jira
+        self.userProjects = userProjects
 
+    def getProject(self, key):
+        issues = self.jira.search_issues('assignee = currentuser() AND project={key}'.format(key=key))
+        if (issues != []):
+            self.userProjects.append(key)
+        
+    def getUserProjects(self):
+        threads = []
+        allProjects = self.jira.projects()
 
-    def authInJira(self, bot, update, item, message):
-        bot.sendMessage(chat_id=update.message.chat_id, text='Ожидай...')
-        self.jira = JIRA(basic_auth=('{0}'.format(self.login), '{0}'.format(self.password)), options={'server': '{0}'.format(self.server)})
-        bot.send_message(chat_id=update.message.chat_id, \
-            reply_markup=create_button.generateStandup(bot, update, item, message))
+        for key in allProjects:
+            threads.append(threading.Thread(target=self.getProject, args=(key,)))
+        
+        for thread in threads:
+            thread.start()
 
-    def getServer(self, bot, update, item, message):
-        if message == 'Jira Software':
+    def authInJira(self, data):
+        data['bot'].sendMessage(chat_id=data['update'].message.chat_id, text='Ожидай...')
+        self.jira = JIRA(basic_auth=('{0}'.format(self.login), '{0}'.format(self.password)), options={'server': '{0}'.format(self.server)}, max_retries=0)
+        self.getUserProjects()
+        data['bot'].send_message(chat_id=data['update'].message.chat_id, \
+            reply_markup=create_button.generateStandup(data))
+
+    def getServer(self, data):
+        if data['message'] == 'Jira Software':
             self.server = 'https://nappyclub.atlassian.net'
-        elif message == 'Puzanov Production':
+        elif data['message'] == 'Puzanov Production':
             self.server = 'https://pm.maddevs.co'
-        bot.send_message(chat_id=update.message.chat_id, \
-            reply_markup=create_button.auth(bot, update, item, message))
+        data['bot'].send_message(chat_id=data['update'].message.chat_id, \
+            reply_markup=create_button.auth(data))
 
-    def getloginPassword(self, bot, update, item, message):
-        if message == 'Jira Software' or message == 'Puzanov Production':
-            bot.sendMessage(chat_id=update.message.chat_id, \
+    def getloginPassword(self, data):
+        if data['message'] == 'Jira Software' or data['message'] == 'Puzanov Production':
+            data['bot'].sendMessage(chat_id=data['update'].message.chat_id, \
                 text='Логин и пароль через пробел!')
         else:
-            array = message.split(' ')
+            array = data['message'].split(' ')
             logPass_array = ' '.join(array).split()
             if len(logPass_array) == 2:
                 self.login = logPass_array[0]
                 self.password = logPass_array[1]
-                self.authInJira(bot, update, item, message)
+                self.authInJira(data)
             else:
-                bot.sendMessage(chat_id=update.message.chat_id, \
+                data['bot'].sendMessage(chat_id=data['update'].message.chat_id, \
                     text='Логин и пароль через пробел!')
 
     def getWorklogs(self, issues):
@@ -67,10 +84,6 @@ class ParserJira:
         else:
             return "%d-%d-%d" % (now.year, now.month, now.day - 1)
 
-    def getProjects():
-        projects = self.jira.projects()
-        return projects
-
     def getYesterdayWorklogIssues(self):
         yesterday_issues_worklogs = self.jira.search_issues('worklogAuthor = currentUser() AND worklogDate = "%s"' % self.getYesterday())
         return self.getWorklogs(yesterday_issues_worklogs)
@@ -79,8 +92,13 @@ class ParserJira:
         today_issues = self.jira.search_issues('assignee = currentuser() AND project = "NappyClub" AND sprint in openSprints() AND worklogAuthor = currentUser() AND status in (Idle, Accepted, Open, "In Progress")')
         return today_issues
 
-    def generateStandup(self, bot, update, item, message):
-        bot.sendMessage(chat_id=update.message.chat_id, text='Обработка данных...')
+    def showProjects(self, data):
+        data.update({ 'keys': self.userProjects })
+        data['bot'].send_message(chat_id=data['update'].message.chat_id, \
+            reply_markup=create_button.projectsButton(data))
+
+    def generateStandup(self, data):
+        data['bot'].sendMessage(chat_id=data['update'].message.chat_id, text='Обработка данных...')
         issues_with_worklogs = self.getYesterdayWorklogIssues()
         today_issues_with_worklogs = self.getTodayIssues()
         yesterday = ''
@@ -92,4 +110,4 @@ class ParserJira:
             today += '- {0} {1}/browse/{2}\n'.format(issue.fields.summary, self.server, issue.key)
         
         standup = 'Доброе утро!\n\n*Вчера*\n{0}\n*Сегодня*\n{1}\n\n*Проблемы*\n{2}'.format(yesterday, today, '- Нет проблем!')
-        bot.sendMessage(chat_id=update.message.chat_id, text=standup)
+        data['bot'].sendMessage(chat_id=data['update'].message.chat_id, text=standup)
