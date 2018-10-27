@@ -45,8 +45,8 @@ def projectsButton(data):
     keyboard = []
     counter = 0
     tempArray = []
-    for key in data['keys']:
-        button = InlineKeyboardButton(text="{key}".format(key=key))
+    for project in data['projects']:
+        button = InlineKeyboardButton(text="{key} - {name}".format(key=project['key'], name=project['name']))
         if (counter == 2):
             counter = 0
             keyboard.append(tempArray)

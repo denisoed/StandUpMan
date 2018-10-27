@@ -16,17 +16,17 @@ class ParserJira:
         self.jira = jira
         self.userProjects = userProjects
 
-    def getProject(self, key):
-        issues = self.jira.search_issues('assignee = currentuser() AND project={key}'.format(key=key))
+    def getProject(self, project):
+        issues = self.jira.search_issues('assignee = currentuser() AND project={key}'.format(key=project.key))
         if (issues != []):
-            self.userProjects.append(key)
+            self.userProjects.append({'key': project.key, 'name': project.name})
         
     def getUserProjects(self):
         threads = []
         allProjects = self.jira.projects()
 
-        for key in allProjects:
-            threads.append(threading.Thread(target=self.getProject, args=(key,)))
+        for project in allProjects:
+            threads.append(threading.Thread(target=self.getProject, args=(project,)))
         
         for thread in threads:
             thread.start()
@@ -93,7 +93,7 @@ class ParserJira:
         return today_issues
 
     def showProjects(self, data):
-        data.update({ 'keys': self.userProjects })
+        data.update({ 'projects': self.userProjects })
         data['bot'].send_message(chat_id=data['update'].message.chat_id, \
             reply_markup=create_button.projectsButton(data))
 
