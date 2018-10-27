@@ -4,7 +4,8 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMa
 # Start button
 def start_buttons(data):
     auth_btn = InlineKeyboardButton(text="Авторизоваться")
-    keyboard = [[auth_btn]]
+    help_me = InlineKeyboardButton(text="Помощь")
+    keyboard = [[auth_btn], [help_me]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
                            text=messages.desc['start_msg'], reply_markup=reply_markup)
@@ -42,9 +43,21 @@ def generateStandup(data):
 # Generate standup 
 def projectsButton(data):
     keyboard = []
+    counter = 0
+    tempArray = []
     for key in data['keys']:
         button = InlineKeyboardButton(text="{key}".format(key=key))
-        keyboard.append([button])
+        if (counter == 2):
+            counter = 0
+            keyboard.append(tempArray)
+            tempArray = []
+            tempArray.append(button)
+            counter += 1
+        else:
+            tempArray.append(button)
+            counter += 1
+    if (tempArray != []):
+        keyboard.append(tempArray)
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
         text=messages.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
