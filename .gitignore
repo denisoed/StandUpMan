@@ -10,3 +10,4 @@
 htmlcov
 .cache
 *.coverage
+secrets.py

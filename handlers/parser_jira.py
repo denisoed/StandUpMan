@@ -9,24 +9,28 @@ from handlers import create_button
 class ParserJira:
     """docstring"""
 
-    def __init__(self, server=None, login=None, password=None, jira=None, userProjects=[]):
+    def __init__(self, server=None, login=None, password=None, jira=None, userProjects=[], boardStatuses=[]):
+        self.jira = jira
         self.server = server
         self.login = login
         self.password = password
-        self.jira = jira
         self.userProjects = userProjects
+        self.boardStatuses = boardStatuses
 
-    def getProject(self, project):
-        issues = self.jira.search_issues('assignee = currentuser() AND project={key}'.format(key=project.key))
+    def getProjectsWithYesterdayWorklogs(self, project):
+        issues = self.jira.search_issues('worklogAuthor = currentUser() AND project={key} AND worklogDate = {yesterday}'.format(key=project.key, yesterday=self.getYesterday()))
         if (issues != []):
             self.userProjects.append({'key': project.key, 'name': project.name})
-        
-    def getUserProjects(self):
+    
+    def getServerBoardStatuses(self):
+        self.boardStatuses = self.jira.statuses()
+
+    def getInfoUserProjects(self):
         threads = []
         allProjects = self.jira.projects()
 
         for project in allProjects:
-            threads.append(threading.Thread(target=self.getProject, args=(project,)))
+            threads.append(threading.Thread(target=self.getProjectsWithYesterdayWorklogs, args=(project,)))
         
         for thread in threads:
             thread.start()
@@ -34,7 +38,8 @@ class ParserJira:
     def authInJira(self, data):
         data['bot'].sendMessage(chat_id=data['update'].message.chat_id, text='Ожидай...')
         self.jira = JIRA(basic_auth=('{0}'.format(self.login), '{0}'.format(self.password)), options={'server': '{0}'.format(self.server)}, max_retries=0)
-        self.getUserProjects()
+        self.getServerBoardStatuses()
+        self.getInfoUserProjects()
         data['bot'].send_message(chat_id=data['update'].message.chat_id, \
             reply_markup=create_button.generateStandup(data))
 
@@ -85,7 +90,7 @@ class ParserJira:
             return "%d-%d-%d" % (now.year, now.month, now.day - 1)
 
     def getYesterdayWorklogIssues(self):
-        yesterday_issues_worklogs = self.jira.search_issues('worklogAuthor = currentUser() AND worklogDate = "%s"' % self.getYesterday())
+        yesterday_issues_worklogs = self.jira.search_issues('worklogAuthor = currentUser() AND worklogDate = "{yesterday}"'.format(yesterday=self.getYesterday()))
         return self.getWorklogs(yesterday_issues_worklogs)
 
     def getTodayIssues(self):

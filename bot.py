@@ -2,8 +2,9 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from handlers.handler_message import Messages
 from handlers.handler_button import button_processing
+from secrets import TOKEN
 
-_UPDATER = Updater("")
+_UPDATER = Updater(TOKEN)
 
 logging.basicConfig(level=logging.DEBUG, \
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

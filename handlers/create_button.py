@@ -1,14 +1,23 @@
 from handlers import messages
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 
-# Start button
-def start_buttons(data):
+# Unlock bot
+def unlock(data):
+    unlock_btn = InlineKeyboardButton(text="Разблокировать")
+    keyboard = [[unlock_btn]]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
+                           text=messages.desc['start_msg'], reply_markup=reply_markup)
+    return send
+
+# Auth in JIRA
+def auth_jira(data):
     auth_btn = InlineKeyboardButton(text="Авторизоваться")
     help_me = InlineKeyboardButton(text="Помощь")
     keyboard = [[auth_btn], [help_me]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
-                           text=messages.desc['start_msg'], reply_markup=reply_markup)
+                           text=messages.desc['welcome'], reply_markup=reply_markup)
     return send
 
 # Server buttons
@@ -40,7 +49,7 @@ def generateStandup(data):
         text=messages.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
     return send
 
-# Generate standup 
+# Projects list button
 def projectsButton(data):
     keyboard = []
     counter = 0
