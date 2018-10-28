@@ -1,4 +1,4 @@
-from handlers import messages, create_button
+from handlers import actions, create_button
 
 
 class Messages:
@@ -45,8 +45,8 @@ class Messages:
             self.run()
 
     def run(self):
-        for item in range(len(messages.handler_reply_button)):
-            if self.btn_callback_msg == messages.handler_reply_button[item]['name']:
+        for item in range(len(actions.handler_reply_button)):
+            if self.btn_callback_msg == actions.handler_reply_button[item]['name']:
                 self.data.update({ 'item': item, 'message': self._MESSAGE })
-                run = messages.handler_reply_button[item]['run']
+                run = actions.handler_reply_button[item]['run']
                 run(self.data)

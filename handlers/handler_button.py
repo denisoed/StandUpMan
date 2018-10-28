@@ -1,5 +1,5 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
-from handlers.messages import handler_inline_button
+from handlers.actions import handler_inline_button
 
 
 # Handler click inline button

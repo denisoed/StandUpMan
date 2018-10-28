@@ -1,4 +1,4 @@
-from handlers import messages
+from handlers import actions
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 
 # Unlock bot
@@ -7,7 +7,7 @@ def unlock(data):
     keyboard = [[unlock_btn]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
-                           text=messages.desc['start_msg'], reply_markup=reply_markup)
+                           text=actions.desc['start_msg'], reply_markup=reply_markup)
     return send
 
 # Auth in JIRA
@@ -17,7 +17,7 @@ def auth_jira(data):
     keyboard = [[auth_btn], [help_me]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
-                           text=messages.desc['welcome'], reply_markup=reply_markup)
+                           text=actions.desc['welcome'], reply_markup=reply_markup)
     return send
 
 # Server buttons
@@ -27,7 +27,7 @@ def serverBtn(data):
     keyboard = [[blue_jira, red_jira]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
-        text=messages.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
+        text=actions.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
     return send
 
 # Authorization
@@ -36,7 +36,7 @@ def auth(data):
     keyboard = [[sign_in]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
-        text=messages.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
+        text=actions.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
     return send
 
 # Generate standup 
@@ -46,7 +46,7 @@ def generateStandup(data):
     keyboard = [[standup], [sign_out]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
-        text=messages.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
+        text=actions.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
     return send
 
 # Projects list button
@@ -69,5 +69,5 @@ def projectsButton(data):
         keyboard.append(tempArray)
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
-        text=messages.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
+        text=actions.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
     return send
