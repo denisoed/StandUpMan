@@ -20,9 +20,11 @@ class JiraAPI:
         issues = self.jira.search_issues('worklogAuthor = currentUser() AND project={key} AND worklogDate = {yesterday}'.format(key=project.key, yesterday=self.get_yesterday()))
         if (issues != []):
             self.userProjects.append({'key': project.key, 'name': project.name})
+        return self.userProjects
     
     def get_server_board_statuses(self):
         self.boardStatuses = self.jira.statuses()
+        return self.boardStatuses
 
     def get_info_user_projects(self):
         threads = []
@@ -41,6 +43,7 @@ class JiraAPI:
 
     def get_server(self, server):
         self.server = server
+        return server
 
     def get_worklogs(self, issues):
         worklogs = []
@@ -63,7 +66,7 @@ class JiraAPI:
         elif today.weekday() == 6:
             return str(today - datetime.timedelta(days=2))
         else:
-            return str(today - datetime.timedelta(days=1))
+            return str(today - datetime.timedelta(days=5))
 
     def get_yesterday_worklog_issues(self):
         yesterday_issues_worklogs = self.jira.search_issues('worklogAuthor = currentUser() AND worklogDate = "{yesterday}"'.format(yesterday=self.get_yesterday()))
@@ -73,10 +76,8 @@ class JiraAPI:
         today_issues = self.jira.search_issues('assignee = currentuser() AND project = "NappyClub" AND sprint in openSprints() AND worklogAuthor = currentUser() AND status in (Idle, Accepted, Open, "In Progress")')
         return today_issues
 
-    def show_projects(self, data):
-        data.update({ 'projects': self.userProjects })
-        data['bot'].send_message(chat_id=data['update'].message.chat_id, \
-            reply_markup=create_button.projectsButton(data))
+    def show_projects(self):
+        return self.userProjects
     
     def get_projects(self):
         return self.userProjects

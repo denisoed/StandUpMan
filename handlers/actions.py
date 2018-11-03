@@ -32,11 +32,11 @@ handler_reply_button = [
         'run': create_button.auth_jira,
         'text': 'Заходи если что...'
     },
-    # {
-    #     'name': 'Сгенерировать StandUp',
-    #     'run': jira.showProjects,
-    #     'text': 'Список проектов, в которых ты вчера логал время'
-    # },
+    {
+        'name': 'Сгенерировать StandUp',
+        'run': main.showProjects,
+        'text': 'Список проектов, в которых ты вчера логал время'
+    },
     {
         'name': 'StandUp',
         'run': main.generateStandup,
