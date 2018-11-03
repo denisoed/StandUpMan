@@ -9,10 +9,10 @@ desc = {
 }
 
 servers = {
-    'PuzanovProduction': {
-        'statuses': ['В работе', 'For Development', 'Сделать', 'Selected for Development']
+    'https://pm.maddevs.co': {
+        'statuses': "Backlog"
     },
-    'JiraSoftware': {
-        'statuses': ['Open', 'In Progress', 'Accepted', 'Idle']
+    'https://nappyclub.atlassian.net': {
+        'statuses': "Open, 'In Progress', Accepted, Idle"
     }
 }

@@ -41,9 +41,12 @@ class JiraAPI:
         self.get_server_board_statuses()
         self.get_info_user_projects()
 
-    def get_server(self, server):
+    def set_server(self, server):
         self.server = server
         return server
+
+    def get_server(self):
+        return self.server
 
     def get_worklogs(self, issues):
         worklogs = []
@@ -66,14 +69,14 @@ class JiraAPI:
         elif today.weekday() == 6:
             return str(today - datetime.timedelta(days=2))
         else:
-            return str(today - datetime.timedelta(days=5))
+            return str(today - datetime.timedelta(days=1))
 
     def get_yesterday_worklog_issues(self):
         yesterday_issues_worklogs = self.jira.search_issues('worklogAuthor = currentUser() AND worklogDate = "{yesterday}"'.format(yesterday=self.get_yesterday()))
         return self.get_worklogs(yesterday_issues_worklogs)
 
-    def get_today_issues(self):
-        today_issues = self.jira.search_issues('assignee = currentuser() AND project = "NappyClub" AND sprint in openSprints() AND worklogAuthor = currentUser() AND status in (Idle, Accepted, Open, "In Progress")')
+    def get_today_issues(self, data):
+        today_issues = self.jira.search_issues('assignee = currentuser() AND project = "{project}" AND sprint in openSprints() AND worklogAuthor = currentUser() AND status in ({statuses})'.format(project=data['project'], statuses=data['statuses']))
         return today_issues
 
     def show_projects(self):
@@ -82,9 +85,9 @@ class JiraAPI:
     def get_projects(self):
         return self.userProjects
 
-    def generate_standup(self):
+    def generate_standup(self, data):
         issues_with_worklogs = self.get_yesterday_worklog_issues()
-        today_issues_with_worklogs = self.get_today_issues()
+        today_issues_with_worklogs = self.get_today_issues(data)
         yesterday = ''
         today = ''
         for issue in issues_with_worklogs:

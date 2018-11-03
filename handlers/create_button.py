@@ -43,9 +43,8 @@ def auth(data):
 # Generate standup 
 def generateStandup(data):
     standup = InlineKeyboardButton(text="Сгенерировать StandUp")
-    a = InlineKeyboardButton(text="StandUp")
     sign_out = InlineKeyboardButton(text="Выйти")
-    keyboard = [[standup, a], [sign_out]]
+    keyboard = [[standup], [sign_out]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     send = data['bot'].sendMessage(chat_id=data['update'].message.chat_id,
         text=actions.handler_reply_button[data['item']]['text'], reply_markup=reply_markup)
@@ -57,7 +56,7 @@ def projectsButton(data):
     counter = 0
     tempArray = []
     for project in data['projects']:
-        button = InlineKeyboardButton(text="{key} - {name}".format(key=project['key'], name=project['name']))
+        button = InlineKeyboardButton(text="{name}".format(name=project['name']))
         if (counter == 2):
             counter = 0
             keyboard.append(tempArray)

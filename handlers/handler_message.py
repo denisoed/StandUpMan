@@ -1,4 +1,5 @@
 from handlers import actions, create_button
+import main
 
 class Messages:
 
@@ -37,3 +38,5 @@ class Messages:
                 self.data.update({ 'item': item, 'message': self._MESSAGE })
                 run = actions.handler_reply_button[item]['run']
                 run(self.data)
+                return self.data
+        main.defineMessage(self.data, self._MESSAGE)

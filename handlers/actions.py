@@ -36,11 +36,6 @@ handler_reply_button = [
         'name': 'Сгенерировать StandUp',
         'run': main.showProjects,
         'text': 'Список проектов, в которых ты вчера логал время'
-    },
-    {
-        'name': 'StandUp',
-        'run': main.generateStandup,
-        'text': 'Список проектов, в которых ты вчера логал время'
     }
 ]
 
