@@ -1,6 +1,5 @@
 from handlers import actions, create_button
 
-
 class Messages:
 
     def __init__(self):
@@ -14,22 +13,10 @@ class Messages:
             'update': update
         }
         create_button.unlock(self.data)
-    
-    def listenSentMessages(self, array, message):
-        for item in array:
-            if (item['name'] == message):
-                return item
-        return None
 
     def message_processing(self, bot, update):
         self.btn_callback_msg = update._effective_message.text
-        # action = self.listenSentMessages(messages.handler_reply_button, self.btn_callback_msg)
-        # if (action != None):
-        #     self._MESSAGE = self.btn_callback_msg
-        #     self.run()
-        # else:
-        #     self._MESSAGE = update._effective_message.text
-        #     self.run()
+
         if update._effective_message.text == 'Jira Software':
             self._MESSAGE = self.btn_callback_msg
             self.run()
