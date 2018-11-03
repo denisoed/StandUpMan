@@ -1,4 +1,5 @@
-from handlers import actions, messages
+from data import messages
+from handlers import actions
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 
 # Unlock bot

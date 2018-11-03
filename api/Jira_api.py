@@ -2,7 +2,7 @@ from jira import JIRA
 import datetime
 from telegram import ParseMode
 import threading
-from handlers import create_button, messages
+from handlers import create_button
 
 
 class JiraAPI:
